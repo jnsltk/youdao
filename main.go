@@ -12,10 +12,13 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/mozillazg/go-pinyin"
 )
 
 // Perhaps in the future should change to web scraping as the api is deprecated and might become unavailable in the future
 const apiUrl = "https://fanyi.youdao.com/openapi.do?keyfrom=blog125&key=21376174&type=data&doctype=json&version=1.1&q="
+
+// Declare all tones
 var tones = [][]string {
 	{"ā", "ē", "ī", "ō", "ū", "ǖ"},
 	{"á", "é", "í", "ó", "ú", "ǘ"},
@@ -67,11 +70,15 @@ func printEntry(entry *Entry) {
 		fmt.Println(entry.Query+" |", color.MagentaString("美："), color.YellowString("["+entry.Basic.PhoneticUS+"]"),
 			"|", color.MagentaString("英："), color.YellowString("["+entry.Basic.PhoneticUK+"]"))
 	} else {
+		// Need to format this
 		// fmt.Println(entry.Query+" |", "["+entry.Basic.Phonetic+"]", getWordPinyin(entry.Basic.Phonetic))
+		fmt.Print(entry.Query + " ")
 		printPronColor(entry.Basic.Phonetic)
 	}
 	fmt.Println()
-	// Print "explains"
+	// Print "explains" and pinyin
+	a := pinyin.NewArgs()
+	a.Style = pinyin.Tone
 	color.Magenta("简明：")
 	for i, s := range entry.Basic.Explains {
 		var o string
@@ -80,7 +87,9 @@ func printEntry(entry *Entry) {
 		} else {
 			o = color.GreenString(strconv.Itoa(i+1) + ". ")
 		}
-		fmt.Println(o + s)
+		fmt.Print(o + s + " ")
+		// printPinyinSent(pinyin.Pinyin(s, a))
+		fmt.Print("\n")
 	}
 
 	// Print "web"
@@ -113,7 +122,8 @@ func printPronColor(pron string) {
 	if wordsArr == nil {
 		fmt.Println("["+pron+"]")
 	} else {
-		for _, s := range wordsArr {
+		fmt.Print("[")
+		for i, s := range wordsArr {
 			tone := getWordPinyin(s)
 			switch(tone) {
 			case 1: firstTone(s)
@@ -122,9 +132,17 @@ func printPronColor(pron string) {
 			case 4: fourthTone(s)
 			case 5: fifthTone(s)
 			}
+			if len(wordsArr) > 1 && i != len(wordsArr) -1 {
+				fmt.Print(" ")				
+			}
 		}
+		fmt.Print("]\n")
 	}
 
+}
+
+func printPinyinSent(sent [][]string) {
+	fmt.Print(sent)
 }
 
 func getWordPinyin(pron string) int {
