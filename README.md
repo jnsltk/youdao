@@ -1,5 +1,10 @@
 # CLI youdao dictionary client
 
+```
+UPDATE 2023-08-15
+The youdao API doesn't seem to be working anymore, or at least the API key I was usingg. As such, the program below is now unusable.
+```
+
 Yet another command line youdao Chinese dictionary client, written in go. Uses an api key I found on the internet, so not very future proof.\
 This project was just a fun way for me to experiment with go.
 
